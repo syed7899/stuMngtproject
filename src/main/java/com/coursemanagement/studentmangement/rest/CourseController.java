@@ -18,8 +18,11 @@ import com.coursemanagement.studentmangement.entity.Course;
 import com.coursemanagement.studentmangement.entity.Instructor;
 import com.coursemanagement.studentmangement.service.CourseServiceImpl;
 
+import lombok.extern.log4j.Log4j2;
+
 @RestController
 @RequestMapping("/course")
+@Log4j2
 public class CourseController {
 
 

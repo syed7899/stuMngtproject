@@ -30,6 +30,7 @@ public class CustomisedResponseEntityExceptionHandler extends ResponseEntityExce
     public final ResponseEntity<ErrorDetails> handleUserNotFoundExceptionExceptions(Exception ex, WebRequest request) throws Exception {
         logger.error("Within handleUserNotFoundExceptionExceptions ");
         ErrorDetails errordetails= new ErrorDetails(LocalDateTime.now(),ex.getMessage(),request.getDescription(false));
+        logger.error("***************"+ex.getMessage());
         return new ResponseEntity<ErrorDetails>(errordetails, HttpStatus.NOT_FOUND);
     }
 

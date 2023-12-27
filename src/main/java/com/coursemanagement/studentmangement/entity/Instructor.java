@@ -23,9 +23,12 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
+import lombok.Builder;
+
 @Entity
 @Table(name = "instructor")
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+@Builder
 public class Instructor {
 
 	@Id
@@ -84,6 +87,8 @@ public class Instructor {
 		this.email = email;
 		this.createdAt = createdAt;
 	}
+	
+	
 	
 	
 	public void setId(int id) {
@@ -156,6 +161,19 @@ public class Instructor {
 		courseList.add(tempCourse);
 		tempCourse.setInstructor(this);
 
+	}
+	public Instructor(int id, @Size(min = 2, message = "FirstName Should have atleast 2 characters ") String firstName,
+			@Size(min = 2, message = "LastName Should have atleast 2 characters") String lastName, String email,
+			@Past(message = "BirthDate Should be in Past") Date createdAt, InstructorDetail instructorDetail,
+			List<Course> courseList) {
+		super();
+		this.id = id;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.email = email;
+		this.createdAt = createdAt;
+		this.instructorDetail = instructorDetail;
+		this.courseList = courseList;
 	}
 
 }

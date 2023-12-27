@@ -2,13 +2,20 @@ package com.coursemanagement.studentmangement.service;
 
 import com.coursemanagement.studentmangement.entity.Course;
 import com.coursemanagement.studentmangement.entity.Instructor;
+import com.coursemanagement.studentmangement.exception.UserNotFoundException;
+import com.coursemanagement.studentmangement.model.CourseResponse;
+import com.coursemanagement.studentmangement.model.InstructorResponse;
 import com.coursemanagement.studentmangement.respository.CourseRepository;
 import com.coursemanagement.studentmangement.respository.InstructorRepository;
+
+import lombok.extern.log4j.Log4j2;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
+import static org.springframework.beans.BeanUtils.*;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -18,10 +25,10 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Log4j2
 public class InstructorServiceImpl implements InstructorService {
 
 
-	private static final Logger logger= LoggerFactory.getLogger(InstructorServiceImpl.class);
 
 	@Autowired
 	private InstructorRepository instructorRepository;
@@ -29,15 +36,15 @@ public class InstructorServiceImpl implements InstructorService {
 	@Override
 	public List<Instructor> findAll() {
 		List<Instructor>  listInstructor=instructorRepository.findAll();
-        listInstructor.forEach(i->System.out.print(i));
 		return listInstructor;
 	}
 
-	@Override
+	@Override	
 	public Instructor findById(int instructorId) {
-		Optional<Instructor> instructor = instructorRepository.findById(instructorId);
-		Instructor theInstructor = instructor.orElse(null);
-		return theInstructor;
+		Instructor instructor = 
+				instructorRepository.findById(instructorId)
+				.orElseThrow(() -> new UserNotFoundException("Instructor Not found with given id:"+instructorId));
+		return instructor;
 	}
 
 	@Override
@@ -48,16 +55,10 @@ public class InstructorServiceImpl implements InstructorService {
 
 	@Override
 	public void deleteById(int instructorId) {
-		/*
-		Optional<Instructor> optionalInstructor = instructorRepository.findById(instructorId);
-		Instructor instructor=optionalInstructor.orElse(null);
-		if (instructor == null) {
-			throw new UserNotFoundException("Instructor Not Found with ID:-" + instructorId);
-		}
-		Instructor theInstructor = instructor;
-		instructorRepository.delete(theInstructor);
-		*/
-		 instructorRepository.deleteById(instructorId);
+		Instructor instructor = 
+				instructorRepository.findById(instructorId)
+				.orElseThrow(() -> new UserNotFoundException("Instructor Not found with given id:"+instructorId));
+		 instructorRepository.delete(instructor);
 	}
 
 	@Override
@@ -69,8 +70,12 @@ public class InstructorServiceImpl implements InstructorService {
 
 
 
-	public Optional<Instructor> getCoursesOfInstructor(@PathVariable int instructorId) {
-		return instructorRepository.findById(instructorId);
+	public List<Course> getCoursesOfInstructor(@PathVariable int instructorId) {
+		log.info("Courses for Id :"+instructorId);
+		Instructor instructor= instructorRepository.findById(instructorId).get();
+        List<Course> courseList=instructor.getCourseList();
+		log.info("courseList Is:============"+courseList);
+		return courseList;
 	}
 
 
@@ -95,5 +100,11 @@ public class InstructorServiceImpl implements InstructorService {
 		*/
 		System.out.println("startDate :::"+date1 +" "+"endDate :::"+date2);
 		return instructorRepository.findByCreatedAtBetween(date1, date2);
+	}
+
+	@Override
+	public Instructor saveInstructor(Instructor instructor) {
+		// TODO Auto-generated method stub
+		return instructorRepository.save(instructor);
 	}
 }

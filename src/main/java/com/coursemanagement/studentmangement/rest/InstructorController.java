@@ -1,15 +1,21 @@
 package com.coursemanagement.studentmangement.rest;
 
-
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
 import com.coursemanagement.studentmangement.service.InstructorServiceImpl;
+
+import lombok.extern.log4j.Log4j2;
+
 import com.coursemanagement.studentmangement.exception.UserNotFoundException;
+import com.coursemanagement.studentmangement.model.CourseResponse;
+import com.coursemanagement.studentmangement.model.InstructorResponse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,86 +33,96 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 
-
 @RestController
 @RequestMapping("/instructor")
+@Log4j2
 public class InstructorController {
-
-
-	private static final Logger logger= LoggerFactory.getLogger(InstructorController.class);
 
 	@Autowired
 	private InstructorServiceImpl instructorService;
 
 	@GetMapping("/instructors")
-	public List<Instructor> getAllInstructors() {
-		logger.info("getAllInstructors has been Called -- within controller");
-		List<Instructor> listOfInstructor= instructorService.findAll();
-		// listOfInstructor.forEach(i->System.out.println(i));
-		 return listOfInstructor;
-		//return ResponseEntity.ok().body()
-	}
-
-	@PostMapping(value="/instructors",consumes = {"application/json"})
-	public ResponseEntity<Instructor> saveInstructor(@RequestBody Instructor instructor) {
-		Instructor instructorDetail= instructorService.save(instructor);
-		logger.info("instructorDetail details are :"+instructorDetail);
-		// return instructorDetail;
-		URI location= ServletUriComponentsBuilder.fromCurrentRequest()
-				.path("/{id}")
-				.buildAndExpand(instructorDetail.getId())
-				.toUri();
-		logger.info("location Details " +location);
-		return ResponseEntity.created(location).build();
-	}
-
-
-	@GetMapping("/instructors/{instructorId}")
-	public Instructor getInstructor(@PathVariable int instructorId) {
-		logger.info("Instructor with id {}:"+instructorId);
-		Instructor instructor= instructorService.findById(instructorId);
-		if (instructor == null) {
-			logger.error("Within Exception Block");
-			throw new UserNotFoundException("Instructor id could not be found -"+instructorId);
+	public ResponseEntity<List<Instructor>> getAllInstructors() {
+		log.info("getAllInstructors has been Called -- within controller");
+		List<Instructor> instructorList = instructorService.findAll();
+		if (instructorList.size() <= 0) {
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 		}
-		return instructor;
+		return ResponseEntity.of(Optional.of(instructorList));
 	}
 
+	@PostMapping(value = "/new/instructors", consumes = { "application/json" })
+	public ResponseEntity<Instructor> saveInstructor(@RequestBody Instructor instructor) {
+		try {
+			Instructor instructordetails = instructorService.saveInstructor(instructor);
+			log.info("instructorDetail details are saved with ID:" + instructordetails.getId());
+			return ResponseEntity.of(Optional.of(instructordetails));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
 
+	// @GetMapping("/new/instructors/{instructorId}")
+	@GetMapping("/instructors/{instructorId}")
+	public ResponseEntity<Instructor> getInstructor(@PathVariable int instructorId) {
+		log.info("Find Instructor with id {}:" + instructorId);
+		Instructor instructor = instructorService.findById(instructorId);
+		return ResponseEntity.of(Optional.of(instructor));
+	}
 
 	@PutMapping("/instructors")
-	public Instructor updateInstructor(@Valid @RequestBody Instructor instructor) {
-		Instructor updatedInstructor= instructorService.updateInstructor(instructor);
-		logger.info("updated Instructor with below details:{} "+updatedInstructor);
-		return updatedInstructor;
+	public ResponseEntity<Instructor> updateInstructor(@Valid @RequestBody Instructor instructor) {
+		try {
+			Instructor updatedInstructor = instructorService.updateInstructor(instructor);
+			log.info("updated Instructor with below details:{} " + updatedInstructor);
+			return ResponseEntity.ok().body(updatedInstructor);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
 	}
 
 	@DeleteMapping("/instructors/{instructorId}")
-	public void deleteInstructor(@PathVariable int instructorId) {
-		instructorService.deleteById(instructorId);
-		logger.info("Deleted Instructor with Id: {}"+instructorId);
-
-	}
-	
-	@GetMapping("/instructor/{instructorId}/courses")
-	public ResponseEntity<List<Course>> getCoursesForInstructor(@PathVariable int instructorId){
-		logger.info("Courses For the  Instructor with Instructor id is {}"+ instructorId);
-		Optional<Instructor> instructor=instructorService.getCoursesOfInstructor(instructorId);
-		if (instructor.isPresent()) {
-			Instructor theInstructor = instructor.get();
-			List<Course> courseList = theInstructor.getCourseList();
-			return ResponseEntity.ok(courseList);
-		} else {
-			return ResponseEntity.notFound().build();
+	public ResponseEntity<?> deleteInstructor(@PathVariable int instructorId) {
+		try {
+			instructorService.deleteById(instructorId);
+			log.info("Deleted Instructor with Id:" + instructorId);
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
 
+	@GetMapping("/instructor/{instructorId}/courses")
+	public ResponseEntity<List<Course>> getCoursesForInstructor(@PathVariable int instructorId) {
+		log.info("Courses For the  Instructor with Instructor id is {}" + instructorId);
+		List<Course> courseList = instructorService.getCoursesOfInstructor(instructorId);
+		log.info("CourseList in controller:" + courseList);
+		if (courseList != null) {
+			return ResponseEntity.of(Optional.of(courseList));
+		} else {
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+		}
+	}
 
 	@GetMapping("/instructors/dob")
 	public List<Instructor> getAllInstructorsBetweenDates(@RequestParam String startDate,
-														  @RequestParam String endDate) {
-		logger.info("getAllInstructorsBetweenDates has been called with startDate {} and enDate {}",startDate,endDate);
-		return instructorService.getInstructorBetweenDates(startDate,endDate);
+			@RequestParam String endDate) {
+		log.info("getAllInstructorsBetweenDates has been called with startDate {} and endDate {}", startDate, endDate);
+		return instructorService.getInstructorBetweenDates(startDate, endDate);
 	}
 
+	/*
+	 * @PostMapping(value="/instructors",consumes = {"application/json"}) public
+	 * ResponseEntity<Instructor> saveInstructor(@RequestBody Instructor instructor)
+	 * { Instructor instructorDetail= instructorService.save(instructor);
+	 * log.info("instructorDetail details are :"+instructorDetail); // return
+	 * instructorDetail; URI location=
+	 * ServletUriComponentsBuilder.fromCurrentRequest() .path("/{id}")
+	 * .buildAndExpand(instructorDetail.getId()) .toUri();
+	 * log.info("location Details " +location); return
+	 * ResponseEntity.created(location).build(); }
+	 */
 }

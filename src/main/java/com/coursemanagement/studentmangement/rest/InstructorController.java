@@ -1,6 +1,5 @@
 package com.coursemanagement.studentmangement.rest;
 
-import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
@@ -8,12 +7,6 @@ import com.coursemanagement.studentmangement.service.InstructorServiceImpl;
 
 import lombok.extern.log4j.Log4j2;
 
-import com.coursemanagement.studentmangement.exception.UserNotFoundException;
-import com.coursemanagement.studentmangement.model.CourseResponse;
-import com.coursemanagement.studentmangement.model.InstructorResponse;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.coursemanagement.studentmangement.entity.Course;
 import com.coursemanagement.studentmangement.entity.Instructor;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 

@@ -6,11 +6,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(HttpStatus.NOT_FOUND)
-public class UserNotFoundException extends RuntimeException {
+public class InstructorNotFoundException extends RuntimeException {
 
-    private static final Logger logger= LoggerFactory.getLogger(UserNotFoundException.class);
-    public UserNotFoundException(String message) {
+    private static final Logger logger= LoggerFactory.getLogger(InstructorNotFoundException.class);
+    public InstructorNotFoundException(String message) {
              super(message);
-        logger.info("Within UserNotFoundException Block");
+        logger.info("Within InstructorNotFoundException Block");
     }
 }

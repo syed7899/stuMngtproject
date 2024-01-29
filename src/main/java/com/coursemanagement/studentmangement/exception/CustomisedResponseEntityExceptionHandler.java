@@ -26,8 +26,8 @@ public class CustomisedResponseEntityExceptionHandler extends ResponseEntityExce
     }
 
 
-    @ExceptionHandler(UserNotFoundException.class)
-    public final ResponseEntity<ErrorDetails> handleUserNotFoundExceptionExceptions(Exception ex, WebRequest request) throws Exception {
+    @ExceptionHandler(InstructorNotFoundException.class)
+    public final ResponseEntity<ErrorDetails> handleInstructorNotFoundExceptionExceptions(Exception ex, WebRequest request) throws Exception {
         logger.error("Within handleUserNotFoundExceptionExceptions ");
         ErrorDetails errordetails= new ErrorDetails(LocalDateTime.now(),ex.getMessage(),request.getDescription(false));
         logger.error("***************"+ex.getMessage());
@@ -40,5 +40,24 @@ public class CustomisedResponseEntityExceptionHandler extends ResponseEntityExce
 
         ErrorDetails errordetails= new ErrorDetails(LocalDateTime.now()," "+ex.getErrorCount()+"" +ex.getLocalizedMessage(),request.getDescription(false));
         return new ResponseEntity(errordetails, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(StudentNotFoundException.class)
+    public final ResponseEntity<ErrorDetails> handleStudentNotFoundExceptionExceptions(Exception ex, WebRequest request) throws Exception {
+        logger.error("Within handleStudentNotFoundException ");
+        ErrorDetails errordetails= new ErrorDetails(LocalDateTime.now(),ex.getMessage(),request.getDescription(false));
+        //StudentManagementHandler smh= new StudentManagementHandler();
+        logger.error("***************$$$$$$$$$$$"+ex.getMessage());
+        return new ResponseEntity<ErrorDetails>(errordetails, HttpStatus.NOT_FOUND);
+    }
+
+
+    @ExceptionHandler(CourseNotFoundException.class)
+    public final ResponseEntity<ErrorDetails> handleCourseNotFoundExceptionExceptions(Exception ex, WebRequest request) throws Exception {
+        logger.error("Within handleCourseNotFoundException ");
+        ErrorDetails errordetails= new ErrorDetails(LocalDateTime.now(),ex.getMessage(),request.getDescription(false));
+        //StudentManagementHandler smh= new StudentManagementHandler();
+        logger.error("***************$$$$$$$$$$$"+ex.getMessage());
+        return new ResponseEntity<ErrorDetails>(errordetails, HttpStatus.NOT_FOUND);
     }
 }

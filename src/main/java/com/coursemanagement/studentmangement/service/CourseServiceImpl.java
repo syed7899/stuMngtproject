@@ -2,8 +2,9 @@ package com.coursemanagement.studentmangement.service;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 
+import com.coursemanagement.studentmangement.exception.CourseNotFoundException;
+import com.coursemanagement.studentmangement.exception.InstructorNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -40,13 +41,12 @@ public class CourseServiceImpl implements CourseService {
 	@Override
 	public void addCourseToInstructor(int courseId, int instructorId) {
 		System.out.println("courseId ::" + courseId + " ---- " + "Instructor id::" + instructorId);
-		Optional<Course> theCourse = courseRepository.findById(courseId);
-		Course course = theCourse.get();
-		Optional<Instructor> instructor = instructorRepository.findById(instructorId);
-		Instructor theInstructor = instructor.get();
-		theInstructor.addCourse(course);
-		instructorRepository.save(theInstructor);
-
+		Course theCourse = courseRepository.findById(courseId)
+				.orElseThrow(() -> new CourseNotFoundException("Course Not found with given id:****** "+ courseId));
+		Instructor instructor = instructorRepository.findById(instructorId)
+				.orElseThrow(() -> new InstructorNotFoundException("Instructor Not found with given id***** "+instructorId));
+		instructor.addCourse(theCourse);
+		instructorRepository.save(instructor);
 	}
 
 	@Override

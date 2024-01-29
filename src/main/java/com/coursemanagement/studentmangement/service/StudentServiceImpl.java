@@ -2,6 +2,8 @@ package com.coursemanagement.studentmangement.service;
 
 import com.coursemanagement.studentmangement.entity.Course;
 import com.coursemanagement.studentmangement.entity.Student;
+import com.coursemanagement.studentmangement.exception.CourseNotFoundException;
+import com.coursemanagement.studentmangement.exception.StudentNotFoundException;
 import com.coursemanagement.studentmangement.respository.CourseRepository;
 import com.coursemanagement.studentmangement.respository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,15 +48,18 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public void addCoursesForStudent(int studentId, int courseId) {
-        Student theStudent=studentRepository.findById(studentId).get();
-        Course theCourse=courseRepository.findById(courseId).get();
+        Student theStudent=studentRepository.findById(studentId)
+                .orElseThrow(() -> new StudentNotFoundException("Student Not found with given id:******"+ studentId));
+        Course theCourse=courseRepository.findById(courseId)
+                .orElseThrow(() -> new CourseNotFoundException("Course Not found with given id:****** "+ courseId));
         theCourse.addStudent(theStudent);
         courseRepository.save(theCourse);
     }
 
     @Override
     public List<Course> getCoursesForStudent(int studentId) {
-        Student theStudent=studentRepository.findById(studentId).get();
-        return theStudent.getCourseList();
+        Student theStudent=studentRepository.findById(studentId)
+                .orElseThrow(() -> new StudentNotFoundException("Student Not found with given id:****** "+ studentId));
+          return theStudent.getCourseList();
     }
 }

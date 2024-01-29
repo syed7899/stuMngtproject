@@ -53,7 +53,7 @@ public class StudentController {
 	}
 	
 	
-	
+	//post
 	@GetMapping("course/{courseId}/student/{studentId}")
 	public void addCoursesForStudent(@PathVariable int studentId,@PathVariable int courseId){
 		studentServiceImpl.addCoursesForStudent(studentId,courseId);

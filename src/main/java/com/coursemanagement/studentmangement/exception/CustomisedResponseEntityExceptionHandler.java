@@ -39,21 +39,18 @@ public class CustomisedResponseEntityExceptionHandler extends ResponseEntityExce
                 .build(),HttpStatus.NOT_FOUND);
               }
 
-/*  ?? Look into this later on priority
-    protected ResponseEntity<ErrorDetails> handleMethodArgumentNotValid(
+
+      protected ResponseEntity<Object> handleMethodArgumentNotValid(
             MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
 
 //        ErrorDetails errordetails= new ErrorDetails(LocalDateTime.now()," "+ex.getErrorCount()+"" +ex.getFieldError().getDefaultMessage(),request.getDescription(false));
   //      return new ResponseEntity(errordetails, HttpStatus.BAD_REQUEST);
-        return new ResponseEntity<>(new ErrorDetails().builder()
-                .errorMessage(ex.getMessage())
-                .errorCode(ex.getMessage())
+        return new ResponseEntity<>(new ValidationErrorResponse().builder()
+                .errorMessage(ex.getFieldError().getDefaultMessage())
+                .errorCount(ex.getErrorCount())
                 .build(),HttpStatus.BAD_REQUEST);
-    }
-
-
-} */
-
+       }
+    
     @ExceptionHandler(StudentNotFoundException.class)
     public final ResponseEntity<ErrorDetails> handleStudentNotFoundExceptionExceptions(StudentNotFoundException exception) throws Exception {
         logger.error("Within handleStudentNotFoundException ");

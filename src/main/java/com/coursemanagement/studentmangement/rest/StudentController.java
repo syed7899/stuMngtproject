@@ -18,6 +18,8 @@ import com.coursemanagement.studentmangement.entity.Student;
 import com.coursemanagement.studentmangement.respository.CourseRepository;
 import com.coursemanagement.studentmangement.respository.StudentRepository;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/student")
 public class StudentController {
@@ -37,7 +39,7 @@ public class StudentController {
 	}
 	
 	@PostMapping("/students")
-	public Student saveStudent(@RequestBody Student student) {
+	public Student saveStudent(@Valid @RequestBody Student student) {
 		return studentServiceImpl.saveStudent(student);
 	}
 

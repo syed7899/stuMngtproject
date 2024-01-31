@@ -1,0 +1,22 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/hb-05-many-to-many?useSSL=false&serverTimezone=UTC
+    username: hbstudent
+    password: hbstudent
+  jpa:
+    properties:
+       hibernate:
+          dialect:org.hibernate.dialect.MySQLDialect
+          format_sql:true
+    show:
+      show-sql:true
+
+
+
+
+
+
+
+
+
+

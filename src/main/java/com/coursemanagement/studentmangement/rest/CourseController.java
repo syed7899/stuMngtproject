@@ -20,6 +20,8 @@ import com.coursemanagement.studentmangement.service.CourseServiceImpl;
 
 import lombok.extern.log4j.Log4j2;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/course")
 @Log4j2
@@ -59,7 +61,7 @@ public class CourseController {
 	
 	
 	@GetMapping("/courses/{courseId}/instructor/{instructorId}")
-	public void addCourseToInstructor(@PathVariable int courseId, @PathVariable int instructorId){
+	public void addCourseToInstructor(@Valid @PathVariable int courseId, @PathVariable int instructorId){
 		courseServiceImpl.addCourseToInstructor(courseId, instructorId);
 	}
 	

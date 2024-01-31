@@ -42,9 +42,9 @@ public class CourseServiceImpl implements CourseService {
 	public void addCourseToInstructor(int courseId, int instructorId) {
 		System.out.println("courseId ::" + courseId + " ---- " + "Instructor id::" + instructorId);
 		Course theCourse = courseRepository.findById(courseId)
-				.orElseThrow(() -> new CourseNotFoundException("Course Not found with given id:****** "+ courseId));
+				.orElseThrow(() -> new CourseNotFoundException("Course Not found with given id:****** "+ courseId,"COURSE_NOT_FOUND"));
 		Instructor instructor = instructorRepository.findById(instructorId)
-				.orElseThrow(() -> new InstructorNotFoundException("Instructor Not found with given id***** "+instructorId));
+				.orElseThrow(() -> new InstructorNotFoundException("Instructor Not found with given id***** "+instructorId,"Product_NOT_FOUND"));
 		instructor.addCourse(theCourse);
 		instructorRepository.save(instructor);
 	}

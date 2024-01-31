@@ -1,17 +1,18 @@
 package com.coursemanagement.studentmangement.exception;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @AllArgsConstructor
-@Getter
+@Data
+@NoArgsConstructor
+@Builder
 public class ErrorDetails {
 
-    private LocalDateTime timestamp;
-    private String message;
-    private String details;
+   // private LocalDateTime timestamp;
+    private String errorMessage;
+    private String errorCode;
 
 }

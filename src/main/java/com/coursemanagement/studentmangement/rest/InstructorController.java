@@ -1,9 +1,14 @@
 package com.coursemanagement.studentmangement.rest;
 
+
+import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
+import com.coursemanagement.studentmangement.model.InstructorResponse;
 import com.coursemanagement.studentmangement.service.InstructorServiceImpl;
+
+import com.coursemanagement.studentmangement.utility.EmailValidator;
 
 import lombok.extern.log4j.Log4j2;
 
@@ -22,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.coursemanagement.studentmangement.entity.Course;
 import com.coursemanagement.studentmangement.entity.Instructor;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 
@@ -33,6 +39,7 @@ public class InstructorController {
 	@Autowired
 	private InstructorServiceImpl instructorService;
 
+
 	@GetMapping("/instructors")
 	public ResponseEntity<List<Instructor>> getAllInstructors() {
 		log.info("getAllInstructors has been Called -- within controller");
@@ -43,24 +50,26 @@ public class InstructorController {
 		return ResponseEntity.of(Optional.of(instructorList));
 	}
 
-	@PostMapping(value = "/new/instructors", consumes = { "application/json" })
-	public ResponseEntity<Instructor> saveInstructor(@RequestBody Instructor instructor) {
-		try {
-			Instructor instructordetails = instructorService.saveInstructor(instructor);
-			log.info("instructorDetail details are saved with ID:" + instructordetails.getId());
-			return ResponseEntity.of(Optional.of(instructordetails));
-		} catch (Exception e) {
-			e.printStackTrace();
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-		}
+	@PostMapping(value = "instructors", consumes = { "application/json" })
+	public ResponseEntity<Object> saveInstructor(@Valid @RequestBody Instructor instructor) {
+	   try {
+			   Instructor instructordetails = instructorService.saveInstructor(instructor);
+			   log.info("instructorDetail details are saved with ID:" + instructordetails.getId());
+		       URI location= ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(instructordetails.getId()).toUri();
+			   return ResponseEntity.created(location).build();
+		   }
+	          catch(Exception e){
+		       e.printStackTrace();
+			   return ResponseEntity.badRequest().body("Invalid email address. Kindly check your email address!!");
+			}
 	}
 
 	// @GetMapping("/new/instructors/{instructorId}")
 	@GetMapping("/instructors/{instructorId}")
-	public ResponseEntity<Instructor> getInstructor(@PathVariable int instructorId) {
+	public ResponseEntity<InstructorResponse> getInstructor(@PathVariable int instructorId) {
 		log.info("Find Instructor with id {}:" + instructorId);
-		Instructor instructor = instructorService.findById(instructorId);
-		return ResponseEntity.of(Optional.of(instructor));
+		InstructorResponse instructorResponse = instructorService.findById(instructorId);
+		return new ResponseEntity<>(instructorResponse,HttpStatus.OK);
 	}
 
 	@PutMapping("/instructors")
@@ -98,14 +107,14 @@ public class InstructorController {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 		}
 	}
-
+/*
 	@GetMapping("/instructors/dob")
 	public List<Instructor> getAllInstructorsBetweenDates(@RequestParam String startDate,
 			@RequestParam String endDate) {
 		log.info("getAllInstructorsBetweenDates has been called with startDate {} and endDate {}", startDate, endDate);
 		return instructorService.getInstructorBetweenDates(startDate, endDate);
 	}
-
+*/
 	/*
 	 * @PostMapping(value="/instructors",consumes = {"application/json"}) public
 	 * ResponseEntity<Instructor> saveInstructor(@RequestBody Instructor instructor)

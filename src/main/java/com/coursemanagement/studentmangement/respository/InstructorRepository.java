@@ -12,6 +12,6 @@ public interface InstructorRepository extends JpaRepository<Instructor, Integer 
 	
 	
 	
-	List<Instructor> findByCreatedAtBetween(Date startDate, Date endDate);
+	//List<Instructor> findByCreatedAtBetween(Date startDate, Date endDate);
 
 }

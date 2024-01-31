@@ -21,43 +21,63 @@ public class CustomisedResponseEntityExceptionHandler extends ResponseEntityExce
 
     @ExceptionHandler(Exception.class)
     public final ResponseEntity<ErrorDetails> handleALLExceptions(Exception ex, WebRequest request) throws Exception {
-        ErrorDetails errordetails= new ErrorDetails(LocalDateTime.now(),ex.getMessage(),request.getDescription(false));
-        return new ResponseEntity<ErrorDetails>(errordetails, HttpStatus.INTERNAL_SERVER_ERROR);
+        logger.error("Within handleAllExceptions ");
+        return new ResponseEntity<>(new ErrorDetails().builder()
+                .errorMessage(ex.getMessage())
+                .errorCode(ex.getMessage())
+                .build(),HttpStatus.NOT_FOUND);
+
     }
 
 
     @ExceptionHandler(InstructorNotFoundException.class)
-    public final ResponseEntity<ErrorDetails> handleInstructorNotFoundExceptionExceptions(Exception ex, WebRequest request) throws Exception {
+    public final ResponseEntity<ErrorDetails> handleInstructorNotFoundExceptionExceptions(InstructorNotFoundException exception)  {
         logger.error("Within handleUserNotFoundExceptionExceptions ");
-        ErrorDetails errordetails= new ErrorDetails(LocalDateTime.now(),ex.getMessage(),request.getDescription(false));
-        logger.error("***************"+ex.getMessage());
-        return new ResponseEntity<ErrorDetails>(errordetails, HttpStatus.NOT_FOUND);
-    }
+               return new ResponseEntity<>(new ErrorDetails().builder()
+                .errorMessage(exception.getMessage())
+                .errorCode(exception.getErrorCode())
+                .build(),HttpStatus.NOT_FOUND);
+              }
 
-
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(
+/*  ?? Look into this later on priority
+    protected ResponseEntity<ErrorDetails> handleMethodArgumentNotValid(
             MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
 
-        ErrorDetails errordetails= new ErrorDetails(LocalDateTime.now()," "+ex.getErrorCount()+"" +ex.getLocalizedMessage(),request.getDescription(false));
-        return new ResponseEntity(errordetails, HttpStatus.BAD_REQUEST);
+//        ErrorDetails errordetails= new ErrorDetails(LocalDateTime.now()," "+ex.getErrorCount()+"" +ex.getFieldError().getDefaultMessage(),request.getDescription(false));
+  //      return new ResponseEntity(errordetails, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ErrorDetails().builder()
+                .errorMessage(ex.getMessage())
+                .errorCode(ex.getMessage())
+                .build(),HttpStatus.BAD_REQUEST);
     }
 
+
+} */
+
     @ExceptionHandler(StudentNotFoundException.class)
-    public final ResponseEntity<ErrorDetails> handleStudentNotFoundExceptionExceptions(Exception ex, WebRequest request) throws Exception {
+    public final ResponseEntity<ErrorDetails> handleStudentNotFoundExceptionExceptions(StudentNotFoundException exception) throws Exception {
         logger.error("Within handleStudentNotFoundException ");
-        ErrorDetails errordetails= new ErrorDetails(LocalDateTime.now(),ex.getMessage(),request.getDescription(false));
+      //  ErrorDetails errordetails= new ErrorDetails(LocalDateTime.now(),ex.getMessage(),request.getDescription(false));
         //StudentManagementHandler smh= new StudentManagementHandler();
-        logger.error("***************$$$$$$$$$$$"+ex.getMessage());
-        return new ResponseEntity<ErrorDetails>(errordetails, HttpStatus.NOT_FOUND);
+        //logger.error("***************$$$$$$$$$$$"+ex.getMessage());
+        //return new ResponseEntity<ErrorDetails>(errordetails, HttpStatus.NOT_FOUND);
+
+        return new ResponseEntity<>(new ErrorDetails().builder()
+                .errorMessage(exception.getMessage())
+                .errorCode(exception.getErrorCode())
+                .build(),HttpStatus.NOT_FOUND);
     }
+
 
 
     @ExceptionHandler(CourseNotFoundException.class)
-    public final ResponseEntity<ErrorDetails> handleCourseNotFoundExceptionExceptions(Exception ex, WebRequest request) throws Exception {
+    public final ResponseEntity<ErrorDetails> handleCourseNotFoundExceptionExceptions(CourseNotFoundException exception) {
         logger.error("Within handleCourseNotFoundException ");
-        ErrorDetails errordetails= new ErrorDetails(LocalDateTime.now(),ex.getMessage(),request.getDescription(false));
-        //StudentManagementHandler smh= new StudentManagementHandler();
-        logger.error("***************$$$$$$$$$$$"+ex.getMessage());
-        return new ResponseEntity<ErrorDetails>(errordetails, HttpStatus.NOT_FOUND);
+        //return new ResponseEntity<ErrorDetails>(errordetails, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(new ErrorDetails().builder()
+                .errorMessage(exception.getMessage())
+                .errorCode(exception.getErrorCode())
+                .build(),HttpStatus.NOT_FOUND);
+
     }
 }

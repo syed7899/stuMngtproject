@@ -12,16 +12,16 @@ import java.util.Optional;
 public interface InstructorService {
 	
 	public List<Instructor> findAll();
-	public Instructor findById(int instructorId);
+	public InstructorResponse findById(int instructorId);
 	public Instructor save(Instructor instructor);
-	public Instructor saveInstructor(Instructor instructor);
+	public Instructor saveInstructor(Instructor instructor)throws Exception;
 	public void deleteById(int instructorId);
 
 	public Instructor updateInstructor(Instructor instructor);
 
 	public List<Course> getCoursesOfInstructor(int instructorId);
 
-	public  List<Instructor> getInstructorBetweenDates(String startDate, String endDate);
+	//public  List<Instructor> getInstructorBetweenDates(String startDate, String endDate);
 
 	/*
 	public void addCourseToInstructor(int courseId, int instructorId);

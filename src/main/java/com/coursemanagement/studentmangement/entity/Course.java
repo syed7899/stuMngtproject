@@ -17,6 +17,9 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.DecimalMax;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.Positive;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
@@ -52,6 +55,8 @@ public class Course {
 	// @JsonSerialize
 	// @JsonBackReference
 	// @JsonManagedReference
+	//@JsonIgnoreProperties(ignoreUnknown = true, value = {"students"})
+	@JsonIgnore
 	private Instructor instructor;
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -61,9 +66,13 @@ public class Course {
 	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST,
 			CascadeType.REFRESH })
 	@JoinTable(name = "course_student", joinColumns = @JoinColumn(name = "course_id"), inverseJoinColumns = @JoinColumn(name = "student_id"))
+	@JsonIgnore
 	private List<Student> students;
 
 	@Column(name = "price")
+	@Positive(message = "Price cannot be Negative")
+	@DecimalMin(value = "500", inclusive = false,message = "Courses Price Cannot be Less then 500")
+	@DecimalMax(value = "3000", inclusive = false,message = "Courses Price Cannot be greater then 3000")
 	private BigDecimal price;
 
 	public Course() {

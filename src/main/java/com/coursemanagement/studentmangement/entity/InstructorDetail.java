@@ -1,5 +1,7 @@
 package com.coursemanagement.studentmangement.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -28,6 +30,7 @@ public class InstructorDetail {
 	// Instructor class
 	@OneToOne(mappedBy = "instructorDetail", cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST,
 			CascadeType.REFRESH })
+	@JsonIgnore
 	private Instructor instructor;
 
 	public InstructorDetail() {

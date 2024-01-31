@@ -14,9 +14,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -38,6 +41,7 @@ public class Instructor {
 
 	@Column(name = "first_name")
 	@Size(min=2,message = "FirstName Should have atleast 2 characters ")
+	@NotNull(message = "FirstName cannot be null")
 	private String firstName;
 
 	@Column(name = "last_name")
@@ -54,12 +58,13 @@ public class Instructor {
 
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "instructor_detail_id")
+	//@JsonIgnore
 	private InstructorDetail instructorDetail;
 
 	// this mappedBy is referencing the instructor in Course class
 	@OneToMany(mappedBy = "instructor", cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST,
 			CascadeType.REFRESH })
-	// @JsonIgnore
+	 //@JsonIgnore
 	// @JsonIgnoreProperties
 	// @JsonManagedReference
 	//@JsonBackReference
@@ -67,6 +72,16 @@ public class Instructor {
 
 	public Instructor() {
 		super();
+	}
+
+	public Instructor(int id, String firstName, String lastName, String email, Date createdAt, InstructorDetail instructorDetail, List<Course> courseList) {
+		this.id = id;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.email = email;
+		this.createdAt = createdAt;
+		this.instructorDetail = instructorDetail;
+		this.courseList = courseList;
 	}
 	/*
 	 * public Instructor(String firstName, String lastName, String email) {
@@ -78,15 +93,17 @@ public class Instructor {
 		return id;
 	}
 
-	
+	/*
 
-	public Instructor(int id, String firstName, String lastName, String email, Date createdAt) {
+	public Instructor(int id, String firstName, String lastName, String email) {
 		this.id = id;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.email = email;
-		this.createdAt = createdAt;
+
 	}
+	*/
+
 	
 	
 	
@@ -137,13 +154,9 @@ public class Instructor {
 
 	
 
-	public Date getCreatedAt() {
-		return createdAt;
-	}
 
-	public void setCreatedAt(Date createdAt) {
-		this.createdAt = createdAt;
-	}
+
+
 
 	@Override
 	public String toString() {
@@ -162,18 +175,28 @@ public class Instructor {
 		tempCourse.setInstructor(this);
 
 	}
+	/*
 	public Instructor(int id, @Size(min = 2, message = "FirstName Should have atleast 2 characters ") String firstName,
 			@Size(min = 2, message = "LastName Should have atleast 2 characters") String lastName, String email,
-			@Past(message = "BirthDate Should be in Past") Date createdAt, InstructorDetail instructorDetail,
+			 InstructorDetail instructorDetail,
 			List<Course> courseList) {
 		super();
 		this.id = id;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.email = email;
-		this.createdAt = createdAt;
 		this.instructorDetail = instructorDetail;
 		this.courseList = courseList;
 	}
+	*/
+
+	public Date getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(Date createdAt) {
+		this.createdAt = createdAt;
+	}
+
 
 }

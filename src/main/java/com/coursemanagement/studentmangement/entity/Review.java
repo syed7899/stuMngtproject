@@ -1,5 +1,7 @@
 package com.coursemanagement.studentmangement.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.List;
 
 import javax.persistence.Column;
@@ -17,6 +19,7 @@ public class Review {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="id")
+	@JsonIgnore
 	private int id;
 	
 	@Column(name="comment")

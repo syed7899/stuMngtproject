@@ -3,10 +3,13 @@ package com.coursemanagement.studentmangement.service;
 import com.coursemanagement.studentmangement.entity.Course;
 import com.coursemanagement.studentmangement.entity.Instructor;
 import com.coursemanagement.studentmangement.exception.InstructorNotFoundException;
+import com.coursemanagement.studentmangement.model.InstructorResponse;
 import com.coursemanagement.studentmangement.respository.InstructorRepository;
 
+import com.coursemanagement.studentmangement.utility.EmailValidator;
 import lombok.extern.log4j.Log4j2;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,11 +35,14 @@ public class InstructorServiceImpl implements InstructorService {
 	}
 
 	@Override	
-	public Instructor findById(int instructorId) {
+	public InstructorResponse findById(int instructorId) {
 		Instructor instructor = 
 				instructorRepository.findById(instructorId)
-				.orElseThrow(() -> new InstructorNotFoundException("Instructor Not found with given id:"+instructorId));
-		return instructor;
+				.orElseThrow(() -> new InstructorNotFoundException("Instructor Not found with given id:"+instructorId,"PRODUCT_NOT_FOUND"));
+
+		InstructorResponse instructorResponse= new InstructorResponse();
+		BeanUtils.copyProperties(instructor,instructorResponse);
+		return instructorResponse;
 	}
 
 	@Override
@@ -49,7 +55,7 @@ public class InstructorServiceImpl implements InstructorService {
 	public void deleteById(int instructorId) {
 		Instructor instructor = 
 				instructorRepository.findById(instructorId)
-				.orElseThrow(() -> new InstructorNotFoundException("Instructor Not found with given id:"+instructorId));
+				.orElseThrow(() -> new InstructorNotFoundException("Instructor Not found with given id:"+instructorId,"PRODUCT_NOT_FOUND"));
 		 instructorRepository.delete(instructor);
 	}
 
@@ -65,13 +71,13 @@ public class InstructorServiceImpl implements InstructorService {
 	public List<Course> getCoursesOfInstructor(@PathVariable int instructorId) {
 		log.info("Courses for Id :"+instructorId);
 		Instructor instructor= instructorRepository.findById(instructorId)
-				.orElseThrow(() -> new InstructorNotFoundException("Instructor Not found with given id:"+instructorId));
+				.orElseThrow(() -> new InstructorNotFoundException("Instructor Not found with given id:"+instructorId,"PRODUCT_NOT_FOUND"));
         List<Course> courseList=instructor.getCourseList();
 		log.info("courseList Is:============"+courseList);
 		return courseList;
 	}
 
-
+/*
 
 	public List<Instructor> getInstructorBetweenDates(String startDate, String endDate){
 		Date date1=null;
@@ -91,13 +97,25 @@ public class InstructorServiceImpl implements InstructorService {
 		String startDate = simpleDateFormat.format(1979-01-07);
 		String endDate = simpleDateFormat.format(1990-01-07);
 		*/
+	/*
 		System.out.println("startDate :::"+date1 +" "+"endDate :::"+date2);
 		return instructorRepository.findByCreatedAtBetween(date1, date2);
 	}
-
+*/
 	@Override
 	public Instructor saveInstructor(Instructor instructor) {
-		// TODO Auto-generated method stub
-		return instructorRepository.save(instructor);
+		Instructor returninstructor=null;
+		String regexPattern = "^(?=.*[@])(?:(?:[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*)@(?:gmail\\.com|yahoo\\.com|yahoo\\.co\\.in|gmail\\.co\\.in))$";
+		String emailaddress=instructor.getEmail();
+		Boolean emailValid= EmailValidator.patternMatches(emailaddress,regexPattern);
+		log.info(emailValid);
+		log.info(emailaddress);
+		if (emailValid) {
+			instructor.setEmail(emailaddress);
+			 returninstructor = instructorRepository.save(instructor);
+		}else{
+			throw new RuntimeException("Invalid email..plz check your emailId");
+		}
+          return returninstructor;
 	}
 }
